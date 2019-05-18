@@ -13,6 +13,9 @@ def recentPayday(date=datetime.now(), payday=24):
     return lastPayday
 
 def strToDate(str):
-    return datetime.strptime(str, '%Y/%m/%d')
+    return datetime.strptime(str, "%Y/%m/%d")
 
+def getMostRecentCsv():
+    return max(glob.iglob("*.csv"), key=os.path.getmtime)
 
+print(getMostRecentCsv())
