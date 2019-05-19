@@ -345,3 +345,5 @@ date,account,category,amount,currency,converted amount,currency,description
 19/05/2019,Cash,Food,-85,PHP,-85,PHP,
 19/05/2019,BPI,To 'Cash',"-2,800",PHP,"-2,800",PHP,
 19/05/2019,Cash,From 'BPI',"2,800",PHP,"2,800",PHP,
+19/05/2019,Cash,To 'A/R 2',"-2,000",PHP,"-2,000",PHP,Kathz
+19/05/2019,A/R 2,From 'Cash',"2,000",PHP,"2,000",PHP,Kathz
