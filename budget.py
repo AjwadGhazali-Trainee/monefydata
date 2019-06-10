@@ -27,7 +27,14 @@ budgetList =  [
 				'frequency': MONTHLY,
 				'prededuct': 0,
 				'categoryList': [
-				
+					'Gift',
+					'Gifts',
+					'Entertainment',
+					'Clothes',
+					'Sports',
+					'Haircut',
+					'Book',
+					'Pets'
 				]
 			},
 			{
@@ -36,7 +43,11 @@ budgetList =  [
 				'frequency': DAILY,
 				'prededuct': 3500+269,
 				'categoryList': [
-				
+					'Food',
+					'Transport',
+					'Eating out',
+					'Communications',
+					'Health'
 				]
 			}
 		]
