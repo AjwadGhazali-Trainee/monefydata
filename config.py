@@ -15,3 +15,17 @@ CATEGORY_SALARY = 'Salary'
 DAILY = 1
 WEEKLY = 2
 MONTHLY = 3
+
+# SUMMARY DATA MODEL
+BUDGET_LIST = 'Budget List'
+OVERALL_NET = 'Net Gain/Loss'
+OVERALL_REMAIN = 'Remaining Balance'
+SUGGESTED_PERDAY = 'Suggested Budget per day'
+
+# BUDGET ANALYSIS MODEL
+BUDGET_NAME = 'Name'
+BUDGET_ALLOCATION = 'Allocated Budget'
+BUDGET_EXPECTED_EXPENSE = 'Expected Expense'
+BUDGET_ACTUAL_EXPENSE = 'Actual Expense'
+BUDGET_NET = 'Net Gain/Loss'
+BUDGET_REMAIN = 'Remaining Balance'

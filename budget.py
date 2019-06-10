@@ -1,4 +1,4 @@
-from config import *
+from config import MONTHLY, DAILY
 
 payday = 24
 
