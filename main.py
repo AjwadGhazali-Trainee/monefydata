@@ -10,9 +10,12 @@ from config import BUDGET_NET
 from config import BUDGET_REMAIN
 
 def main():
+    # getting needed data
     budgetList = getBudgetList()
     tranDf = getTransactionDataFrame()
     daysSinceLastPayday = getDaysSinceLastPayday()
+
+    # initializing summary model
     summaryModel = {}
     summaryModel[BUDGET_LIST] = []
     summaryModel[OVERALL_NET] = 0
@@ -20,6 +23,7 @@ def main():
     summaryModel[SUGGESTED_PERDAY] = 0
 
     for budget in budgetList:
+        # initializing budget analysis model
         budgetAnalysisModel = {}
         budgetAnalysisModel[BUDGET_NAME] = ''
         budgetAnalysisModel[BUDGET_ALLOCATION] = 0
@@ -28,12 +32,14 @@ def main():
         budgetAnalysisModel[BUDGET_NET] = 0
         budgetAnalysisModel[BUDGET_REMAIN] = 0
 
+        # computations
         allocatedBudget = getAllocatedBudget(budget.allocation, tranDf)
         expectedExpense = getExpectedExpenseToDate(allocatedBudget, daysSinceLastPayday)
         actualExpense = getActualExpense(budget.categoryList, tranDf)
         net = expectedExpense - actualExpense
         remainingBalance = allocatedBudget - actualExpense
 
+        # saving budget analysis model
         budgetAnalysisModel[BUDGET_NAME] = budget.name
         budgetAnalysisModel[BUDGET_ALLOCATION] = allocatedBudget
         budgetAnalysisModel[BUDGET_EXPECTED_EXPENSE] = expectedExpense
@@ -41,8 +47,10 @@ def main():
         budgetAnalysisModel[BUDGET_NET] = net
         budgetAnalysisModel[BUDGET_REMAIN] = remainingBalance
 
+        # updating summary model
         summaryModel[BUDGET_LIST].append(budgetAnalysisModel)
         summaryModel[OVERALL_NET] += budgetAnalysisModel[BUDGET_NET]
+        summaryModel[OVERALL_REMAIN] += budgetAnalysisModel[BUDGET_REMAIN]
         
 
 def getBudgetList():
