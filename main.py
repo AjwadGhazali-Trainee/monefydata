@@ -1,80 +1,75 @@
-from config import BUDGET_LIST
-from config import OVERALL_NET
-from config import OVERALL_REMAIN
-from config import SUGGESTED_PERDAY
-from config import BUDGET_NAME
-from config import BUDGET_ALLOCATION
-from config import BUDGET_EXPECTED_EXPENSE
-from config import BUDGET_ACTUAL_EXPENSE
-from config import BUDGET_NET
-from config import BUDGET_REMAIN
 from datetime import datetime, timedelta	
 from dateutil.relativedelta import relativedelta
+from budgetAnalysisModel import BudgetAnalysisModel
+from summaryModel import SummaryModel
+from config import *
+import analyzerInput as ai
 import pandas as pd
 import glob
 import os
 
 def main():
-    # initializing inputs
+    # initialize inputs
     incomeList = getIncomeList()
     budgetList = getBudgetList()
+    payday = getPayday()
     tranDf = getTransactionDataFrame()
-    recentPayday = getRecentPayday()
+    recentPayday = getRecentPayday(payday=payday)
+    nextPayday = getNextPayday(payday=payday)
 
-    # filtering dataframe
-    tranDf = tranDf[tranDf['date'] >= recentPayday]
+    # filter dataframe
+    tranDf = tranDf[tranDf[COLUMN_DATE] >= recentPayday]
 
-    # initializing summary model
-    summaryModel = {}
-    summaryModel[BUDGET_LIST] = []
-    summaryModel[OVERALL_NET] = 0
-    summaryModel[OVERALL_REMAIN] = 0
+    # initialize summary model
+    summaryModel = SummaryModel()
 
     for budget in budgetList:
-        # initializing budget analysis model
-        budgetAnalysisModel = {}
-        budgetAnalysisModel[BUDGET_NAME] = ''
-        budgetAnalysisModel[BUDGET_ALLOCATION] = 0
-        budgetAnalysisModel[BUDGET_EXPECTED_EXPENSE] = 0
-        budgetAnalysisModel[BUDGET_ACTUAL_EXPENSE] = 0
-        budgetAnalysisModel[BUDGET_NET] = 0
-        budgetAnalysisModel[BUDGET_REMAIN] = 0
-        budgetAnalysisModel[SUGGESTED_PERDAY] = 0
+        # initialize budget analysis model
+        budgetAnalysisModel = BudgetAnalysisModel()
 
         # computations
-        allocatedBudget = budget.allocation * getIncome(incomeList, tranDf)
+        allocatedBudget = budget.allocation * getIncome(incomeList, tranDf) - budget.fixedExpense
         expectedExpense = getExpectedExpenseToDate(allocatedBudget, recentPayday, nextPayday)
         actualExpense = getActualExpense(budget.categoryList, tranDf)
         net = expectedExpense - actualExpense
         remainingBalance = allocatedBudget - actualExpense
 
-        # saving budget analysis model
-        budgetAnalysisModel[BUDGET_NAME] = budget.name
-        budgetAnalysisModel[BUDGET_ALLOCATION] = allocatedBudget
-        budgetAnalysisModel[BUDGET_EXPECTED_EXPENSE] = expectedExpense
-        budgetAnalysisModel[BUDGET_ACTUAL_EXPENSE] = actualExpense
-        budgetAnalysisModel[BUDGET_NET] = net
-        budgetAnalysisModel[BUDGET_REMAIN] = remainingBalance
-        budgetAnalysisModel[SUGGESTED_PERDAY] = remainingBalance/(nextPayday - datetime.now()).days
+        # save budget analysis model
+        budgetAnalysisModel.name = budget.name
+        budgetAnalysisModel.allocation = allocatedBudget
+        budgetAnalysisModel.expected_expense = expectedExpense
+        budgetAnalysisModel.actual_expense = actualExpense
+        budgetAnalysisModel.net = net
+        budgetAnalysisModel.remain = remainingBalance
+        budgetAnalysisModel.frequency = budget.frequency
+        if budget.frequency == DAILY and (nextPayday - datetime.now()).days != 0:
+            budgetAnalysisModel.suggestion = remainingBalance/(nextPayday - datetime.now()).days
+        elif budget.frequency == WEEKLY and ((nextPayday - datetime.now()).days/7) != 0:
+            budgetAnalysisModel.suggestion = remainingBalance/((nextPayday - datetime.now()).days/7)
+        elif budget.frequency == MONTHLY:
+            budgetAnalysisModel.suggestion = remainingBalance
 
-        # updating summary model
-        summaryModel[BUDGET_LIST].append(budgetAnalysisModel)
-        summaryModel[OVERALL_NET] += budgetAnalysisModel[BUDGET_NET]
-        summaryModel[OVERALL_REMAIN] += budgetAnalysisModel[BUDGET_REMAIN]
+        # update summary model
+        summaryModel.budget_analysis_list.append(budgetAnalysisModel)
+        summaryModel.overall_net += budgetAnalysisModel.net
+        summaryModel.overall_remain += budgetAnalysisModel.remain
 
     outputAnalysisReport(summaryModel)
         
 
 def getBudgetList():
-    return []
+    return ai.budgetList
 
 def getIncomeList():
-    return []
+    return ai.incomeList
+
+def getPayday():
+    return ai.payday
 
 def getTransactionDataFrame():
-    mostRecentCsv = max(glob.iglob("*.csv"), key=os.path.getmtime)
+    mostRecentCsv = max(glob.iglob(COMMON_ALL_FILE_SELECT + COMMON_DATA_SRC_CSV), key=os.path.getmtime)
     df = pd.read_csv(mostRecentCsv)
-    df['date'] = pd.to_datetime(format="%d/%m/%Y",arg=df['date'])
+    df[COLUMN_DATE] = pd.to_datetime(format=COMMON_DATE_FORMAT,arg=df[COLUMN_DATE])
     return df
 
 def getRecentPayday(date=datetime.now(), payday=24):
@@ -92,22 +87,31 @@ def getNextPayday(date=datetime.now(), payday=24):
     return thisPayday.replace(hour=0,minute=0,second=0,microsecond=0)
 
 def getIncome(incomeList, df):
-    incomes = df[df['category'].isin(incomeList)]
-    return incomes['amount'].sum()
+    incomes = df[df[COLUMN_CATEGORY].isin(incomeList)]
+    return incomes[COLUMN_AMOUNT].sum()
 
 def getExpectedExpenseToDate(allocationAmount, recentPayday, nextPayday):
     budgetPerDay = allocationAmount/(nextPayday - recentPayday).days
     return budgetPerDay * (datetime.now() - recentPayday).days
 
 def getActualExpense(categoryList, df):
-    expenses = df[df['category'].isin(categoryList)]
-    return expenses['amount'].sum()
+    expenses = df[df[COLUMN_CATEGORY].isin(categoryList)]
+    return expenses[COLUMN_AMOUNT].sum()
 
 def outputAnalysisReport(summaryModel):
-    with open('AnalysisReport.txt', 'w') as f:
+    with open(COMMON_ANALYSIS_REPORT_FILENAME, 'w') as f:
         print(BUDGET_LIST, file=f)
-        for budgetAnalysisModel in summaryModel[BUDGET_LIST]:
-            for k, v in budgetAnalysisModel.iterItems():
-                print(k + ' : ' + v,file=f)
-        print(OVERALL_NET + ' : ' + summaryModel[OVERALL_NET], file=f)
-        print(OVERALL_REMAIN + ' : ' + summaryModel[OVERALL_REMAIN], file=f)
+        for budgetAnalysisModel in summaryModel.budget_analysis_list:
+            printWithColon(BUDGET_NAME, budgetAnalysisModel.name, f)
+            printWithColon(BUDGET_ALLOCATION, budgetAnalysisModel.allocation, f)
+            printWithColon(BUDGET_EXPECTED_EXPENSE, budgetAnalysisModel.expected_expense, f)
+            printWithColon(BUDGET_ACTUAL_EXPENSE, budgetAnalysisModel.actual_expense, f)
+            printWithColon(BUDGET_NET, budgetAnalysisModel.net, f)
+            printWithColon(BUDGET_REMAIN, budgetAnalysisModel.remain, f)
+            printWithColon(BUDGET_FREQUENCY, budgetAnalysisModel.frequency, f)
+            printWithColon(BUDGET_SUGGESTION, budgetAnalysisModel.suggestion, f)
+        printWithColon(OVERALL_NET, summaryModel.overall_net, f)
+        printWithColon(OVERALL_REMAIN, summaryModel.overall_remain, f)
+
+def printWithColon(key, val, f):
+    print(key + ':' + val, file=f)

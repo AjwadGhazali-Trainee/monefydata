@@ -1,53 +1,9 @@
-from config import MONTHLY, DAILY
+from config import DAILY
 
-payday = 24
-
-budgetList =  [
-			{
-				'name': 'Savings',
-				'percentage': 0.12,
-				'frequency': MONTHLY,
-				'prededuct': 0,
-				'categoryList': [
-				
-				]
-			},
-			{
-				'name': 'Emergency',
-				'percentage': 0.15,
-				'frequency': MONTHLY,
-				'prededuct': 0,				
-				'categoryList': [
-				
-				]
-			},
-			{
-				'name': 'Wants',
-				'percentage': 0.23,
-				'frequency': MONTHLY,
-				'prededuct': 0,
-				'categoryList': [
-					'Gift',
-					'Gifts',
-					'Entertainment',
-					'Clothes',
-					'Sports',
-					'Haircut',
-					'Book',
-					'Pets'
-				]
-			},
-			{
-				'name': 'Daily',
-				'percentage': 0.5,
-				'frequency': DAILY,
-				'prededuct': 3500+269,
-				'categoryList': [
-					'Food',
-					'Transport',
-					'Eating out',
-					'Communications',
-					'Health'
-				]
-			}
-		]
+class Budget:
+	def __init__(self, name='', percentage=0, frequency=DAILY, fixedExpense=0, categoryList=[]):
+		self.name = name
+		self.allocation = percentage
+		self.frequency = frequency
+		self.fixedExpense = fixedExpense
+		self.categoryList = categoryList
