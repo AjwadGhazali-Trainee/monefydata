@@ -5,16 +5,6 @@ payday = 24
 
 budgetList =  [
             Budget(
-                name = 'Savings',
-                percentage = 0.12,
-                frequency = MONTHLY
-            ),
-            Budget(
-                name = 'Emergency',
-                percentage = 0.15,
-                frequency = MONTHLY
-            ),
-            Budget(
                 name = 'Wants',
                 percentage = 0.23,
                 frequency = MONTHLY,
@@ -26,11 +16,12 @@ budgetList =  [
 					'Sports',
 					'Haircut',
 					'Book',
-					'Pets'
+					'Pets',
+                    'PC'
 				]
             ),
             Budget(
-                name = 'Wants',
+                name = 'Daily',
                 percentage = 0.5,
                 fixedExpense = 3500+269,
                 categoryList = [
@@ -42,6 +33,19 @@ budgetList =  [
 				]
             ),
 		]
+
+exclude = [
+            Budget(
+                name = 'Savings',
+                percentage = 0.12,
+                frequency = MONTHLY
+            ),
+            Budget(
+                name = 'Emergency',
+                percentage = 0.15,
+                frequency = MONTHLY
+            ),
+]
 
 incomeList = [
 	'Deposits',

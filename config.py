@@ -14,6 +14,11 @@ DAILY = 1
 WEEKLY = 2
 MONTHLY = 3
 
+# FREQUENCY ENUM STRING
+DAILY_STR = 'DAILY'
+WEEKLY_STR = 'WEEKLY'
+MONTHLY_STR = 'MONTHLY'
+
 # SUMMARY DATA PRINT MODEL
 BUDGET_LIST = 'Budget List'
 OVERALL_NET = 'Net Gain/Loss'
@@ -28,3 +33,4 @@ BUDGET_NET = 'Net Gain/Loss'
 BUDGET_REMAIN = 'Remaining Balance'
 BUDGET_FREQUENCY = 'Frequency'
 BUDGET_SUGGESTION = 'Suggested Budget'
+BUDGET_SEPARATOR = '-------------------------'

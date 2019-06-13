@@ -68,7 +68,8 @@ def getPayday():
 
 def getTransactionDataFrame():
     mostRecentCsv = max(glob.iglob(COMMON_ALL_FILE_SELECT + COMMON_DATA_SRC_CSV), key=os.path.getmtime)
-    df = pd.read_csv(mostRecentCsv)
+    df = pd.read_csv(mostRecentCsv, thousands=',')
+    df[COLUMN_AMOUNT] = df[COLUMN_AMOUNT].abs()
     df[COLUMN_DATE] = pd.to_datetime(format=COMMON_DATE_FORMAT,arg=df[COLUMN_DATE])
     return df
 
@@ -102,16 +103,25 @@ def outputAnalysisReport(summaryModel):
     with open(COMMON_ANALYSIS_REPORT_FILENAME, 'w') as f:
         print(BUDGET_LIST, file=f)
         for budgetAnalysisModel in summaryModel.budget_analysis_list:
+            print(BUDGET_SEPARATOR, file=f)
             printWithColon(BUDGET_NAME, budgetAnalysisModel.name, f)
             printWithColon(BUDGET_ALLOCATION, budgetAnalysisModel.allocation, f)
             printWithColon(BUDGET_EXPECTED_EXPENSE, budgetAnalysisModel.expected_expense, f)
             printWithColon(BUDGET_ACTUAL_EXPENSE, budgetAnalysisModel.actual_expense, f)
             printWithColon(BUDGET_NET, budgetAnalysisModel.net, f)
             printWithColon(BUDGET_REMAIN, budgetAnalysisModel.remain, f)
-            printWithColon(BUDGET_FREQUENCY, budgetAnalysisModel.frequency, f)
+            if budgetAnalysisModel.frequency == DAILY:
+                printWithColon(BUDGET_FREQUENCY, DAILY_STR, f)
+            elif budgetAnalysisModel.frequency == WEEKLY:
+                printWithColon(BUDGET_FREQUENCY, WEEKLY_STR, f)
+            elif budgetAnalysisModel.frequency == MONTHLY:
+                printWithColon(BUDGET_FREQUENCY, MONTHLY_STR, f)
             printWithColon(BUDGET_SUGGESTION, budgetAnalysisModel.suggestion, f)
+            print(BUDGET_SEPARATOR, file=f)
         printWithColon(OVERALL_NET, summaryModel.overall_net, f)
         printWithColon(OVERALL_REMAIN, summaryModel.overall_remain, f)
 
 def printWithColon(key, val, f):
-    print(key + ':' + val, file=f)
+    print(key + ':' + str(val), file=f)
+
+main()
