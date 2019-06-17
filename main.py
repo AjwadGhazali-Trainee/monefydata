@@ -67,7 +67,10 @@ def getPayday():
     return ai.payday
 
 def getTransactionDataFrame():
-    mostRecentCsv = max(glob.iglob(COMMON_ALL_FILE_SELECT + COMMON_DATA_SRC_CSV), key=os.path.getmtime)
+    mostRecentCsv = max(glob.iglob(COMMON_DATA_SRC_PATH 
+    															+ COMMON_ALL_FILE_SELECT 
+    															+ COMMON_DATA_SRC_CSV), 
+    															key=os.path.getmtime)
     df = pd.read_csv(mostRecentCsv, thousands=',')
     df[COLUMN_AMOUNT] = df[COLUMN_AMOUNT].abs()
     df[COLUMN_DATE] = pd.to_datetime(format=COMMON_DATE_FORMAT,arg=df[COLUMN_DATE])
@@ -100,7 +103,8 @@ def getActualExpense(categoryList, df):
     return expenses[COLUMN_AMOUNT].sum()
 
 def outputAnalysisReport(summaryModel):
-    with open(COMMON_ANALYSIS_REPORT_FILENAME + '_' 
+    with open(COMMON_ANALYSIS_REPORT_FILEPATH 
+    + COMMON_ANALYSIS_REPORT_FILENAME + '_' 
     + datetime.now().strftime(COMMON_DATE_PRINT_FORMAT) 
     + COMMON_ANALYSIS_REPORT_FILE_TYPE, 'w') as f:
         print(BUDGET_LIST, file=f)

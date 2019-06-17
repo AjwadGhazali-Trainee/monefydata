@@ -5,6 +5,16 @@ payday = 24
 
 budgetList =  [
             Budget(
+                name = 'Savings',
+                percentage = 0.12,
+                frequency = MONTHLY
+            ),
+			Budget(
+                name = 'Emergency',
+                percentage = 0.15,
+                frequency = MONTHLY
+            ),
+            Budget(
                 name = 'Wants',
                 percentage = 0.23,
                 frequency = MONTHLY,
@@ -35,16 +45,7 @@ budgetList =  [
 		]
 
 exclude = [
-            Budget(
-                name = 'Savings',
-                percentage = 0.12,
-                frequency = MONTHLY
-            ),
-            Budget(
-                name = 'Emergency',
-                percentage = 0.15,
-                frequency = MONTHLY
-            ),
+
 ]
 
 incomeList = [
