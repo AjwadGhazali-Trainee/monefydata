@@ -45,7 +45,7 @@ def main():
         if budget.frequency == DAILY and (nextPayday - datetime.now()).days != 0:
             budgetAnalysisModel.suggestion = remainingBalance/(nextPayday - datetime.now()).days
         elif budget.frequency == WEEKLY and ((nextPayday - datetime.now()).days/7) != 0:
-            budgetAnalysisModel.suggestion = remainingBalance/((nextPayday - datetime.now()).days/7)
+            budgetAnalysisModel.suggestion = remainingBalance/((nextPayday - datetime.now()).days//7)
         elif budget.frequency == MONTHLY:
             budgetAnalysisModel.suggestion = remainingBalance
 
@@ -100,7 +100,9 @@ def getActualExpense(categoryList, df):
     return expenses[COLUMN_AMOUNT].sum()
 
 def outputAnalysisReport(summaryModel):
-    with open(COMMON_ANALYSIS_REPORT_FILENAME, 'w') as f:
+    with open(COMMON_ANALYSIS_REPORT_FILENAME + '_' 
+    + datetime.now().strftime(COMMON_DATE_PRINT_FORMAT) 
+    + COMMON_ANALYSIS_REPORT_FILE_TYPE, 'w') as f:
         print(BUDGET_LIST, file=f)
         for budgetAnalysisModel in summaryModel.budget_analysis_list:
             print(BUDGET_SEPARATOR, file=f)
