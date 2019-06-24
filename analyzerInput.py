@@ -7,17 +7,20 @@ budgetList =  [
             Budget(
                 name = 'Savings',
                 percentage = 0.12,
-                frequency = MONTHLY
+                frequency = MONTHLY,
+                carryOver = 0
             ),
 			Budget(
                 name = 'Emergency',
                 percentage = 0.15,
-                frequency = MONTHLY
+                frequency = MONTHLY,
+                carryOver = 0
             ),
             Budget(
                 name = 'Wants',
                 percentage = 0.23,
                 frequency = MONTHLY,
+                carryOver = 0,
                 categoryList = [
 					'Gift',
 					'Gifts',
@@ -34,6 +37,7 @@ budgetList =  [
                 name = 'Daily',
                 percentage = 0.5,
                 fixedExpense = 3500+269,
+                carryOver = 0,
                 categoryList = [
 					'Food',
 					'Transport',

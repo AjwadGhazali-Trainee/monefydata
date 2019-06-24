@@ -17,6 +17,9 @@ def main():
     recentPayday = getRecentPayday(payday=payday)
     nextPayday = getNextPayday(payday=payday)
 
+    # prepare constant values
+    income = getIncome(incomeList, tranDf)
+
     # filter dataframe
     tranDf = tranDf[tranDf[COLUMN_DATE] >= recentPayday]
 
@@ -28,7 +31,7 @@ def main():
         budgetAnalysisModel = BudgetAnalysisModel()
 
         # computations
-        allocatedBudget = budget.allocation * getIncome(incomeList, tranDf) - budget.fixedExpense
+        allocatedBudget = budget.allocation * income - budget.fixedExpense + budget.carryOver
         expectedExpense = getExpectedExpenseToDate(allocatedBudget, recentPayday, nextPayday)
         actualExpense = getActualExpense(budget.categoryList, tranDf)
         net = expectedExpense - actualExpense
