@@ -8,7 +8,10 @@ budgetList =  [
                 name = 'Savings',
                 percentage = 0.12,
                 frequency = MONTHLY,
-                carryOver = 0
+                carryOver = 0,
+                categoryList = [
+                	'Premium (PruLife)',
+                ]
             ),
 			Budget(
                 name = 'Emergency',

@@ -9,19 +9,23 @@ import glob
 import os
 
 def main():
+	# optional inputs
+    today = datetime.strptime('2019/06/25', '%Y/%m/%d')
+    # today = datetime.now()
+	
     # initialize inputs
     incomeList = getIncomeList()
     budgetList = getBudgetList()
     payday = getPayday()
     tranDf = getTransactionDataFrame()
-    recentPayday = getRecentPayday(payday=payday)
-    nextPayday = getNextPayday(payday=payday)
-
-    # prepare constant values
-    income = getIncome(incomeList, tranDf)
+    recentPayday = getRecentPayday(date=today, payday=payday)
+    nextPayday = getNextPayday(date=today, payday=payday)
 
     # filter dataframe
     tranDf = tranDf[tranDf[COLUMN_DATE] >= recentPayday]
+
+    # prepare constant values
+    income = getIncome(incomeList, tranDf)
 
     # initialize summary model
     summaryModel = SummaryModel()
@@ -32,7 +36,7 @@ def main():
 
         # computations
         allocatedBudget = budget.allocation * income - budget.fixedExpense + budget.carryOver
-        expectedExpense = getExpectedExpenseToDate(allocatedBudget, recentPayday, nextPayday)
+        expectedExpense = getExpectedExpenseToDate(allocatedBudget, recentPayday, nextPayday, today)
         actualExpense = getActualExpense(budget.categoryList, tranDf)
         net = expectedExpense - actualExpense
         remainingBalance = allocatedBudget - actualExpense
@@ -45,10 +49,10 @@ def main():
         budgetAnalysisModel.net = net
         budgetAnalysisModel.remain = remainingBalance
         budgetAnalysisModel.frequency = budget.frequency
-        if budget.frequency == DAILY and (nextPayday - datetime.now()).days != 0:
-            budgetAnalysisModel.suggestion = remainingBalance/(nextPayday - datetime.now()).days
-        elif budget.frequency == WEEKLY and ((nextPayday - datetime.now()).days/7) != 0:
-            budgetAnalysisModel.suggestion = remainingBalance/((nextPayday - datetime.now()).days//7)
+        if budget.frequency == DAILY and (nextPayday - today).days != 0:
+            budgetAnalysisModel.suggestion = remainingBalance/(nextPayday - today).days
+        elif budget.frequency == WEEKLY and ((nextPayday - today).days/7) != 0:
+            budgetAnalysisModel.suggestion = remainingBalance/((nextPayday - today).days//7)
         elif budget.frequency == MONTHLY:
             budgetAnalysisModel.suggestion = remainingBalance
 
@@ -57,7 +61,7 @@ def main():
         summaryModel.overall_net += budgetAnalysisModel.net
         summaryModel.overall_remain += budgetAnalysisModel.remain
 
-    outputAnalysisReport(summaryModel)
+    outputAnalysisReport(summaryModel, today)
         
 
 def getBudgetList():
@@ -97,18 +101,18 @@ def getIncome(incomeList, df):
     incomes = df[df[COLUMN_CATEGORY].isin(incomeList)]
     return incomes[COLUMN_AMOUNT].sum()
 
-def getExpectedExpenseToDate(allocationAmount, recentPayday, nextPayday):
+def getExpectedExpenseToDate(allocationAmount, recentPayday, nextPayday, today=datetime.now()):
     budgetPerDay = allocationAmount/(nextPayday - recentPayday).days
-    return budgetPerDay * (datetime.now() - recentPayday).days
+    return budgetPerDay * (today - recentPayday).days
 
 def getActualExpense(categoryList, df):
     expenses = df[df[COLUMN_CATEGORY].isin(categoryList)]
     return expenses[COLUMN_AMOUNT].sum()
 
-def outputAnalysisReport(summaryModel):
+def outputAnalysisReport(summaryModel, today=datetime.now()):
     with open(COMMON_ANALYSIS_REPORT_FILEPATH 
     + COMMON_ANALYSIS_REPORT_FILENAME + '_' 
-    + datetime.now().strftime(COMMON_DATE_PRINT_FORMAT) 
+    + today.strftime(COMMON_DATE_PRINT_FORMAT) 
     + COMMON_ANALYSIS_REPORT_FILE_TYPE, 'w') as f:
         print(BUDGET_LIST, file=f)
         for budgetAnalysisModel in summaryModel.budget_analysis_list:
