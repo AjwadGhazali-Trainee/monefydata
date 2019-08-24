@@ -6,9 +6,9 @@ payday = 24
 budgetList =  [
             Budget(
                 name = 'Savings',
-                percentage = 0.12,
+                percentage = 0.24,
                 frequency = MONTHLY,
-                carryOver = 0,
+                carryOver = 8109.13,
                 categoryList = [
                 	'Premium (PruLife)',
                 ]
@@ -17,20 +17,23 @@ budgetList =  [
                 name = 'Emergency',
                 percentage = 0.15,
                 frequency = MONTHLY,
-                carryOver = 0
+                carryOver = 8986.20,
+                categoryList = [
+                    'Gifts'
+                ]
             ),
             Budget(
                 name = 'Wants',
                 percentage = 0.23,
                 frequency = MONTHLY,
-                carryOver = 0,
+                carryOver = -694.18,
                 categoryList = [
 					'Gift',
-					'Gifts',
+					#'Gifts',
 					'Entertainment',
 					'Clothes',
 					'Sports',
-					'Haircut',
+					#'Haircut',
 					'Book',
 					'Pets',
                     'PC'
@@ -38,15 +41,16 @@ budgetList =  [
             ),
             Budget(
                 name = 'Daily',
-                percentage = 0.5,
+                percentage = 0.38,
                 fixedExpense = 3500+269,
-                carryOver = 0,
+                carryOver = 743.81,
                 categoryList = [
 					'Food',
 					'Transport',
 					'Eating out',
 					'Communications',
-					'Health'
+					'Health',
+					'Haircut'
 				]
             ),
 		]
