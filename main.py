@@ -10,8 +10,8 @@ import os
 
 def main():
 	# optional inputs
-    today = datetime.strptime('2019/06/25', '%Y/%m/%d')
-    # today = datetime.now()
+    # today = datetime.strptime('2019/07/20','%Y/%m/%d')
+    today = datetime.now()
 	
     # initialize inputs
     incomeList = getIncomeList()
@@ -23,6 +23,8 @@ def main():
 
     # filter dataframe
     tranDf = tranDf[tranDf[COLUMN_DATE] >= recentPayday]
+    tranDf = tranDf[tranDf[COLUMN_DATE] <= nextPayday]
+    # print(tranDf[tranDf[COLUMN_CATEGORY].isin(incomeList)][COLUMN_AMOUNT])
 
     # prepare constant values
     income = getIncome(incomeList, tranDf)
@@ -93,9 +95,11 @@ def getRecentPayday(date=datetime.now(), payday=24):
 def getNextPayday(date=datetime.now(), payday=24):
     thisPayday = date + relativedelta(months=0, day=payday)
     nextPayday = date + relativedelta(months=1, day=payday)
+    returnDate = thisPayday.replace(hour=0,minute=0,second=0,microsecond=0)
     if (date - thisPayday).days >= 0:
-        return nextPayday.replace(hour=0,minute=0,second=0,microsecond=0)
-    return thisPayday.replace(hour=0,minute=0,second=0,microsecond=0)
+        returnDate = nextPayday.replace(hour=0,minute=0,second=0,microsecond=0)
+    returnDate = returnDate - timedelta(days=1)
+    return returnDate.replace(hour=23, minute=59, second=59, microsecond=59)
 
 def getIncome(incomeList, df):
     incomes = df[df[COLUMN_CATEGORY].isin(incomeList)]
@@ -103,7 +107,7 @@ def getIncome(incomeList, df):
 
 def getExpectedExpenseToDate(allocationAmount, recentPayday, nextPayday, today=datetime.now()):
     budgetPerDay = allocationAmount/(nextPayday - recentPayday).days
-    return budgetPerDay * (today - recentPayday).days
+    return budgetPerDay * ((today - recentPayday).days + 1)
 
 def getActualExpense(categoryList, df):
     expenses = df[df[COLUMN_CATEGORY].isin(categoryList)]
