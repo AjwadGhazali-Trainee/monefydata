@@ -8,7 +8,7 @@ budgetList =  [
                 name = 'Savings',
                 percentage = 0.24,
                 frequency = MONTHLY,
-                carryOver = 8109.13,
+                carryOver = 12597.13,
                 categoryList = [
                 	'Premium (PruLife)',
                 ]
@@ -17,7 +17,7 @@ budgetList =  [
                 name = 'Emergency',
                 percentage = 0.15,
                 frequency = MONTHLY,
-                carryOver = 8986.20,
+                carryOver = 6157.45,
                 categoryList = [
                     'Gifts'
                 ]
@@ -26,7 +26,8 @@ budgetList =  [
                 name = 'Wants',
                 percentage = 0.23,
                 frequency = MONTHLY,
-                carryOver = -694.18,
+                fixedExpense = 12000,
+                carryOver = 3504.07+7000,
                 categoryList = [
 					'Gift',
 					#'Gifts',
@@ -43,7 +44,7 @@ budgetList =  [
                 name = 'Daily',
                 percentage = 0.38,
                 fixedExpense = 3500+269,
-                carryOver = 743.81,
+                carryOver = 128.9,
                 categoryList = [
 					'Food',
 					'Transport',
